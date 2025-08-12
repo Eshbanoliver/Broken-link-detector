@@ -1,0 +1,15 @@
+#broken-link-container {
+    font-family: Arial;
+}
+.link-status-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.status-circle {
+    font-size: 30px;
+    color: green;
+}
+.broken-links {
+    margin-top: 10px;
+}

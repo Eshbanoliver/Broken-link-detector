@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Broken Link Detector - WordPress Dashboard</title>
+    <style>
+        /* WordPress Dashboard Styles */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+            background: #f1f1f1;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        /* WordPress Dashboard Widget Container */
+        .dashboard-widget {
+            background: #fff;
+            border: 1px solid #ccd0d4;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-radius: 3px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .dashboard-widget-header {
+            background: #f9f9f9;
+            border-bottom: 1px solid #eee;
+            padding: 12px 15px;
+            font-weight: 600;
+            color: #23282d;
+        }
+        
+        .dashboard-widget-content {
+            padding: 15px;
+        }
+        
+        /* Plugin specific styles from style.css */
+        #broken-link-container {
+            font-family: Arial;
+        }
+        
+        .link-status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .link-status-header h3 {
+            margin: 0;
+            font-size: 16px;
+            color: #23282d;
+        }
+        
+        .status-circle {
+            font-size: 30px;
+            color: green;
+            text-align: center;
+            min-width: 40px;
+        }
+        
+        .broken-links {
+            margin-top: 10px;
+        }
+        
+        .broken-links h4 {
+            margin: 15px 0 10px 0;
+            font-size: 14px;
+            color: #23282d;
+        }
+        
+        /* WordPress Button Styles */
+        .button {
+            display: inline-block;
+            text-decoration: none;
+            font-size: 13px;
+            line-height: 2.15384615;
+            min-height: 30px;
+            margin: 0;
+            padding: 0 10px;
+            cursor: pointer;
+            border-width: 1px;
+            border-style: solid;
+            -webkit-appearance: none;
+            border-radius: 3px;
+            white-space: nowrap;
+            box-sizing: border-box;
+        }
+        
+        .button-primary {
+            background: #0073aa;
+            border-color: #0073aa;
+            color: #fff;
+            text-shadow: 0 -1px 1px #006799, 1px 0 1px #006799, 0 1px 1px #006799, -1px 0 1px #006799;
+        }
+        
+        .button-primary:hover {
+            background: #005a87;
+            border-color: #005a87;
+        }
+        
+        .button:disabled {
+            background: #f3f5f6 !important;
+            border-color: #ddd !important;
+            color: #a0a5aa !important;
+            cursor: default;
+        }
+        
+        .link-status-summary {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 3px;
+            margin-bottom: 15px;
+        }
+        
+        .status-text {
+            font-size: 14px;
+            color: #555;
+        }
+        
+        #broken-links-list {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        #broken-links-list li {
+            margin: 5px 0;
+            color: #d63638;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        
+        .scanning {
+            color: #ff9500 !important;
+            animation: pulse 1.5s infinite;
+        }
+        
+        .error {
+            color: #d63638 !important;
+        }
+        
+        .success {
+            color: #00a32a !important;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .empty-state {
+            text-align: center;
+            color: #666;
+            font-style: italic;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-widget">
+        <div class="dashboard-widget-header">
+            Broken Link Detector
+        </div>
+        <div class="dashboard-widget-content">
+            <div id="broken-link-container">
+                <div class="link-status-header">
+                    <h3>Link Health Status</h3>
+                    <button id="scan-links" class="button button-primary">Scan Now</button>
+                </div>
+                
+                <div class="link-status-summary">
+                    <div class="status-circle" id="link-status">--</div>
+                    <div class="status-text">Links checked: <span id="links-checked">0</span></div>
+                </div>
+                
+                <div class="broken-links">
+                    <h4>Broken Links Found (<span id="broken-count">0</span>)</h4>
+                    <ul id="broken-links-list">
+                        <li class="empty-state">Click "Scan Now" to check for broken links</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simulating jQuery functionality
+        document.getElementById('scan-links').addEventListener('click', function() {
+            const button = this;
+            const statusCircle = document.getElementById('link-status');
+            const linksChecked = document.getElementById('links-checked');
+            const brokenCount = document.getElementById('broken-count');
+            const brokenList = document.getElementById('broken-links-list');
+            
+            // Start scanning state
+            button.disabled = true;
+            button.textContent = 'Scanning...';
+            statusCircle.textContent = '...';
+            statusCircle.className = 'status-circle scanning';
+            brokenList.innerHTML = '<li class="empty-state">Scanning links...</li>';
+            
+            // Simulate AJAX call delay
+            setTimeout(function() {
+                // Simulate the AJAX response data from your PHP
+                const responseData = {
+                    success: true,
+                    data: {
+                        total: 5,
+                        broken: 2,
+                        list: ['http://example.com/404', 'http://example.com/missing']
+                    }
+                };
+                
+                if (responseData.success) {
+                    // Update status to success
+                    statusCircle.textContent = '✔';
+                    statusCircle.className = 'status-circle success';
+                    linksChecked.textContent = responseData.data.total;
+                    brokenCount.textContent = responseData.data.broken;
+                    
+                    // Build broken links list
+                    let listHtml = '';
+                    if (responseData.data.list.length > 0) {
+                        responseData.data.list.forEach(function(link) {
+                            listHtml += '<li>' + link + '</li>';
+                        });
+                    } else {
+                        listHtml = '<li class="empty-state">No broken links found! 🎉</li>';
+                    }
+                    brokenList.innerHTML = listHtml;
+                } else {
+                    // Error state
+                    statusCircle.textContent = '✖';
+                    statusCircle.className = 'status-circle error';
+                    brokenList.innerHTML = '<li class="empty-state">Error occurred during scan</li>';
+                }
+                
+                // Reset button state
+                button.disabled = false;
+                button.textContent = 'Scan Now';
+            }, 2000);
+        });
+        
+        // Simulate some initial state after page load
+        setTimeout(function() {
+            document.getElementById('link-status').textContent = '?';
+            document.getElementById('link-status').style.color = '#666';
+        }, 500);
+    </script>
+</body>
+</html>
