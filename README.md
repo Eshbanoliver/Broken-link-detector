@@ -3,8 +3,6 @@
 **WordPress Plugin**  
 A lightweight, efficient broken link checker that monitors hyperlinks in real-time and via scheduled scans — helping you maintain a healthy site, improve SEO, and enhance user experience.
 
-![Plugin Banner](https://via.placeholder.com/1200x600.png?text=Real-Time+Broken+Link+Detector)  
-*(Replace with your actual banner/screenshot)*
 
 ## Description
 
